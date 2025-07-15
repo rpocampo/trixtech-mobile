@@ -18,21 +18,39 @@ class _LoginPageState extends State<LoginPage> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        builder: (_) => const Center(child: CircularProgressIndicator()),
       );
 
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pop(context); // Close loading dialog
+        Navigator.pop(context);
         Navigator.pushNamed(context, '/Dashboard');
       });
     }
   }
 
+  InputDecoration buildInputDecoration(String label, IconData icon, Color borderColor, Color textColor) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: borderColor),
+      prefixIcon: Icon(icon, color: borderColor),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: borderColor, width: 2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: borderColor, width: 3),
+      ),
+      filled: true,
+      fillColor: Colors.white,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final borderColor = Colors.yellow.shade800;
+    final textColor = Colors.black;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -43,24 +61,19 @@ class _LoginPageState extends State<LoginPage> {
               key: _formKey,
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'TrixTech',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                      color: borderColor,
                     ),
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
                     controller: emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: const Icon(Icons.email),
-                    ),
+                    style: TextStyle(color: textColor),
+                    decoration: buildInputDecoration('Email', Icons.email, borderColor, textColor),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
@@ -72,13 +85,8 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: passwordController,
                     obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: const Icon(Icons.lock),
-                    ),
+                    style: TextStyle(color: textColor),
+                    decoration: buildInputDecoration('Password', Icons.lock, borderColor, textColor),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';
@@ -93,7 +101,10 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         // TODO: Forgot password
                       },
-                      child: const Text('Forgot password?'),
+                      child: Text(
+                        'Forgot password?',
+                        style: TextStyle(color: borderColor),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -106,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        backgroundColor: Colors.blue[800],
+                        backgroundColor: borderColor,
                       ),
                       child: const Text(
                         'Sign in',
@@ -123,14 +134,14 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: const BorderSide(color: Colors.blue),
+                        side: BorderSide(color: borderColor),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Sign up',
-                        style: TextStyle(fontSize: 16, color: Colors.blue),
+                        style: TextStyle(fontSize: 16, color: borderColor),
                       ),
                     ),
                   ),
