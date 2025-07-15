@@ -1,5 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/book.dart';
 import 'order_screen.dart';
+
+// MODEL CLASS
+class Listing {
+  final String imagePath;
+  final bool isNetworkImage;
+  final String title;
+  final String subtitle;
+  final String price;
+
+  Listing({
+    required this.imagePath,
+    required this.isNetworkImage,
+    required this.title,
+    required this.subtitle,
+    required this.price,
+  });
+}
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -11,155 +29,214 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
+  final List<Listing> listings = [
+    Listing(
+      imagePath: 'assets/Anniversary-photos_0004.jpg',
+      isNetworkImage: false,
+      title: 'Birthday',
+      subtitle: '50 chairs\n20 tables\n5 tents',
+      price: '\$782 total before taxes',
+    ),
+    Listing(
+      imagePath: 'https://source.unsplash.com/featured/?cabin',
+      isNetworkImage: true,
+      title: 'Wedding',
+      subtitle: '200 chairs\n100 tables\n20 tents',
+      price: '\$520 total before taxes',
+    ),
+    Listing(
+      imagePath: 'https://source.unsplash.com/featured/?house,desert',
+      isNetworkImage: true,
+      title: 'Corporate',
+      subtitle: '100 chairs\n50 tables\n10 tents',
+      price: '\$782 total before taxes',
+    ),
+    Listing(
+      imagePath: 'https://source.unsplash.com/featured/?festival',
+      isNetworkImage: true,
+      title: 'Festival',
+      subtitle: '500 chairs\n200 tables\n50 tents',
+      price: '\$950 total before taxes',
+    ),
+  ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
 
-    if (index == 3) { // book now
-      Navigator.pushNamed(context, '/Test');
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DashboardPage()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const book()),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const OrderScreen()),
+        );
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/Test');
+        break;
     }
-    else if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const OrderScreen()),
-      );
-    }
-    else if (index == 0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const DashboardPage()),
-      );
-    }
-
-
-    // You can add other index navigation cases here if needed
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text('TrixTech'),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.black,
-              ),
-              child: Text(
-                'TrixTech Menu',
-                style: TextStyle(
-                  color: Colors.yellow[800],
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.person, color: Colors.yellow[800]),
-              title: const Text('Profile'),
-              onTap: () {
-                Navigator.pushNamed(context, '/Test');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.book, color: Colors.yellow[800]),
-              title: const Text('Book Events'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.shopping_bag, color: Colors.yellow[800]),
-              title: const Text('Orders'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout, color: Colors.yellow[800]),
-              title: const Text('Logout'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-              },
-            ),
-          ],
-        ),
+      drawer: buildDrawer(),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: listings.length,
+        itemBuilder: (context, index) {
+          final listing = listings[index];
+          return Column(
+            children: [
+              buildListingCard(listing),
+              const SizedBox(height: 20),
+            ],
+          );
+        },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          children: [
-            _buildMenuItem(Icons.event, 'Events', () {}),
-            _buildMenuItem(Icons.photo, 'Gallery', () {
+      bottomNavigationBar: buildBottomNavigationBar(),
+    );
+  }
 
-            }),
-            _buildMenuItem(Icons.shopping_cart, 'Orders', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const OrderScreen()),
-              );
-            }),
-            _buildMenuItem(Icons.analytics, 'Reports', () {
-              Navigator.pushNamed(context, '/Reports');
-            }),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.amber[800],
-        unselectedItemColor: Colors.grey[700],
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        iconSize: 28,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "home",
+  Widget buildDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: const BoxDecoration(color: Colors.black),
+            child: Text(
+              'TrixTech Menu',
+              style: TextStyle(
+                color: Colors.yellow[800],
+                fontSize: 24,
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: "book now",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: "orders",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "profile",
-          ),
+          buildDrawerItem(Icons.person, 'Profile', () {
+            Navigator.pushNamed(context, '/Test');
+          }),
+          buildDrawerItem(Icons.book, 'Book Events', () {}),
+          buildDrawerItem(Icons.shopping_bag, 'Orders', () {
+            Navigator.pushNamed(context, '/Orders');
+          }),
+          buildDrawerItem(Icons.logout, 'Logout', () {
+            Navigator.pop(context);
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+          }),
         ],
       ),
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String label, VoidCallback onTap) {
+  Widget buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.yellow[800]),
+      title: Text(title),
+      onTap: onTap,
+    );
+  }
+
+  Widget buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: Colors.amber[800],
+      unselectedItemColor: Colors.grey[700],
+      selectedFontSize: 12,
+      unselectedFontSize: 12,
+      iconSize: 28,
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "home"),
+        BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: "book now"),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: "orders"),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: "profile"),
+      ],
+    );
+  }
+
+  Widget buildListingCard(Listing listing) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
             children: [
-              Icon(icon, size: 40, color: Colors.yellow[800]),
-              const SizedBox(height: 10),
-              Text(label, style: const TextStyle(fontSize: 16)),
+              listing.isNetworkImage
+                  ? Image.network(
+                listing.imagePath,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              )
+                  : Image.asset(
+                listing.imagePath,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+              Positioned(
+                top: 12,
+                left: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'Guest favorite',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: IconButton(
+                  icon: const Icon(Icons.favorite_border),
+                  color: Colors.white,
+                  onPressed: () {},
+                ),
+              ),
             ],
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  listing.title,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(listing.subtitle, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 8),
+                Text(listing.price, style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
