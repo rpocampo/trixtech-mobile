@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/pages/book.dart';
 import 'order_screen.dart';
+import 'models/booking_info.dart';
 
 // MODEL CLASS
 class Listing {
@@ -60,29 +61,40 @@ class _DashboardPageState extends State<DashboardPage> {
     ),
   ];
 
+  void _navigateToOrderScreen() {
+    final dummyBooking = BookingInfo(
+      eventType: 'Birthday',
+      eventName: 'Anna’s 18th',
+      chairs: 50,
+      tables: 20,
+      tents: 5,
+      gcashName: 'Anna Marie',
+      gcashNumber: '09123456789',
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => OrderScreen(booking: dummyBooking),
+      ),
+    );
+  }
+
   void _onItemTapped(int index) {
+    if (_selectedIndex == index) return;
+
     setState(() {
       _selectedIndex = index;
     });
 
     switch (index) {
       case 0:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const DashboardPage()),
-        );
-        break;
+        break; // Stay on Dashboard
       case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const book()),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const book()));
         break;
       case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const OrderScreen()),
-        );
+        _navigateToOrderScreen();
         break;
       case 3:
         Navigator.pushNamed(context, '/Test');
@@ -95,6 +107,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('TrixTech'),
+        backgroundColor: Colors.yellow[800],
       ),
       drawer: buildDrawer(),
       body: ListView.builder(
@@ -132,12 +145,11 @@ class _DashboardPageState extends State<DashboardPage> {
           buildDrawerItem(Icons.person, 'Profile', () {
             Navigator.pushNamed(context, '/Test');
           }),
-          buildDrawerItem(Icons.book, 'Book Events', () {}),
-          buildDrawerItem(Icons.shopping_bag, 'Orders', () {
-            Navigator.pushNamed(context, '/Orders');
+          buildDrawerItem(Icons.book, 'Book Events', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const book()));
           }),
+          buildDrawerItem(Icons.shopping_bag, 'Orders', _navigateToOrderScreen),
           buildDrawerItem(Icons.logout, 'Logout', () {
-            Navigator.pop(context);
             Navigator.popUntil(context, ModalRoute.withName('/'));
           }),
         ],
@@ -209,14 +221,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
               ),
-              Positioned(
+              const Positioned(
                 top: 12,
                 right: 12,
-                child: IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  color: Colors.white,
-                  onPressed: () {},
-                ),
+                child: Icon(Icons.favorite_border, color: Colors.white),
               ),
             ],
           ),
