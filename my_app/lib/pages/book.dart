@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'order_screen.dart';
+import 'models/booking_info.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -44,7 +46,6 @@ class _bookState extends State<book> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Background line
         Positioned(
           top: 20,
           left: 0,
@@ -54,7 +55,6 @@ class _bookState extends State<book> {
             color: Colors.grey[300],
           ),
         ),
-        // Progress line
         Positioned(
           top: 20,
           left: 0,
@@ -68,7 +68,6 @@ class _bookState extends State<book> {
             ),
           ),
         ),
-        // Step indicators
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(3, (index) {
@@ -247,10 +246,23 @@ class _bookState extends State<book> {
         _currentStep++;
       });
     } else {
-      // Booking complete — show confirmation
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Booking Complete!"),
-      ));
+      final bookingData = BookingInfo(
+        eventType: _selectedEventType,
+        eventName: _eventNameController.text,
+        chairs: int.tryParse(_chairsController.text) ?? 0,
+        tables: int.tryParse(_tablesController.text) ?? 0,
+        tents: int.tryParse(_tentsController.text) ?? 0,
+        gcashName: _cardNameController.text,
+        gcashNumber: _cardNumberController.text,
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OrderScreen(booking: bookingData),
+        ),
+      );
+
       setState(() {
         _currentStep = 0;
         _eventNameController.clear();

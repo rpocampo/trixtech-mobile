@@ -3,7 +3,6 @@ import 'package:my_app/pages/ListingPage.dart';
 import 'package:my_app/pages/book.dart';
 import 'pages/login.dart';
 import 'pages/dashboard.dart';
-import 'pages/order_screen.dart';
 import 'pages/Reports.dart';
 import 'pages/Test.dart';
 
@@ -23,12 +22,10 @@ class TrixTechApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginPage(),
         '/Dashboard': (context) => const DashboardPage(),
-        '/Orders': (context) => const OrderScreen(), // ✅ properly inside MaterialApp
         '/Reports': (context) => const Reports(),
         '/Test': (context) => const Test(),
         '/book': (context) => const book(),
         '/ListingPage': (context) => const ListingPage(),
-
       },
       debugShowCheckedModeBanner: false,
     );
