@@ -32,29 +32,29 @@ class _DashboardPageState extends State<DashboardPage> {
 
   final List<Listing> listings = [
     Listing(
-      imagePath: 'assets/Anniversary-photos_0004.jpg',
+      imagePath: 'assets/birthday.jpg',
       isNetworkImage: false,
       title: 'Birthday',
       subtitle: '50 chairs\n20 tables\n5 tents',
       price: '\$782 total before taxes',
     ),
     Listing(
-      imagePath: 'https://source.unsplash.com/featured/?cabin',
-      isNetworkImage: true,
+      imagePath: 'assets/wedding.jpg',
+      isNetworkImage: false,
       title: 'Wedding',
       subtitle: '200 chairs\n100 tables\n20 tents',
       price: '\$520 total before taxes',
     ),
     Listing(
-      imagePath: 'https://source.unsplash.com/featured/?house,desert',
-      isNetworkImage: true,
+      imagePath: 'assets/corporate.jpg',
+      isNetworkImage: false,
       title: 'Corporate',
       subtitle: '100 chairs\n50 tables\n10 tents',
       price: '\$782 total before taxes',
     ),
     Listing(
-      imagePath: 'https://source.unsplash.com/featured/?festival',
-      isNetworkImage: true,
+      imagePath: 'assets/baptism.jpeg',
+      isNetworkImage: false,
       title: 'Festival',
       subtitle: '500 chairs\n200 tables\n50 tents',
       price: '\$950 total before taxes',
@@ -146,7 +146,7 @@ class _DashboardPageState extends State<DashboardPage> {
             Navigator.pushNamed(context, '/Test');
           }),
           buildDrawerItem(Icons.book, 'Book Events', () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const book()));
+
           }),
           buildDrawerItem(Icons.shopping_bag, 'Orders', _navigateToOrderScreen),
           buildDrawerItem(Icons.logout, 'Logout', () {
