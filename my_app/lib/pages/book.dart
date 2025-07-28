@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
+import 'order_screen.dart';
 
 void main() {
-  runApp(const MaterialApp(
-    home: book(),
-    debugShowCheckedModeBanner: false,
-  ));
+  runApp(
+    MaterialApp(
+      home: const book(),
+      debugShowCheckedModeBanner: false,
+      onGenerateRoute: (settings) {
+        if (settings.name == '/Orders') {
+          final args = settings.arguments as Map<String, dynamic>?;
+          return MaterialPageRoute(
+            builder: (context) => OrderScreen(bookingData: args),
+          );
+        }
+        return null;
+      },
+    ),
+  );
 }
 
 class book extends StatefulWidget {
@@ -31,14 +43,14 @@ class _bookState extends State<book> {
     'Wedding',
     'Corporate',
     'Festival',
-    'Other'
+    'Other',
   ];
 
   Widget _buildStepProgress() {
     final List<String> _stepLabels = [
       "Event Type",
       "Event Details",
-      "Payment Info"
+      "Payment Info",
     ];
 
     return Stack(
@@ -49,10 +61,7 @@ class _bookState extends State<book> {
           top: 20,
           left: 0,
           right: 0,
-          child: Container(
-            height: 4,
-            color: Colors.grey[300],
-          ),
+          child: Container(height: 4, color: Colors.grey[300]),
         ),
         // Progress line
         Positioned(
@@ -62,10 +71,7 @@ class _bookState extends State<book> {
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
             widthFactor: _currentStep / 2,
-            child: Container(
-              height: 4,
-              color: Colors.amber[800],
-            ),
+            child: Container(height: 4, color: Colors.amber[800]),
           ),
         ),
         // Step indicators
@@ -119,8 +125,10 @@ class _bookState extends State<book> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Select Event Type",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Select Event Type",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
             DropdownButtonFormField<String>(
               value: _selectedEventType,
@@ -146,8 +154,10 @@ class _bookState extends State<book> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Event Name",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Event Name",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 5),
             TextField(
               controller: _eventNameController,
@@ -159,8 +169,10 @@ class _bookState extends State<book> {
               ),
             ),
             const SizedBox(height: 15),
-            const Text("Number of Chairs",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Number of Chairs",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 5),
             TextField(
               controller: _chairsController,
@@ -173,8 +185,10 @@ class _bookState extends State<book> {
               ),
             ),
             const SizedBox(height: 15),
-            const Text("Number of Tables",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Number of Tables",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 5),
             TextField(
               controller: _tablesController,
@@ -187,8 +201,10 @@ class _bookState extends State<book> {
               ),
             ),
             const SizedBox(height: 15),
-            const Text("Number of Tents",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Number of Tents",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 5),
             TextField(
               controller: _tentsController,
@@ -207,8 +223,10 @@ class _bookState extends State<book> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Gcash Name",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Gcash Name",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 5),
             TextField(
               controller: _cardNameController,
@@ -220,8 +238,10 @@ class _bookState extends State<book> {
               ),
             ),
             const SizedBox(height: 15),
-            const Text("Gcash Number",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Gcash Number",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 5),
             TextField(
               controller: _cardNumberController,
@@ -248,9 +268,18 @@ class _bookState extends State<book> {
       });
     } else {
       // Booking complete — show confirmation
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Booking Complete!"),
-      ));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Booking Complete!")));
+      final bookingData = {
+        'eventType': _selectedEventType,
+        'eventName': _eventNameController.text,
+        'chairs': _chairsController.text,
+        'tables': _tablesController.text,
+        'tents': _tentsController.text,
+        'gcashName': _cardNameController.text,
+        'gcashNumber': _cardNumberController.text,
+      };
       setState(() {
         _currentStep = 0;
         _eventNameController.clear();
@@ -261,6 +290,10 @@ class _bookState extends State<book> {
         _cardNumberController.clear();
         _selectedEventType = null;
       });
+      // Navigate to OrderScreen with data
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.pushNamed(context, '/Orders', arguments: bookingData);
+      });
     }
   }
 
@@ -268,8 +301,10 @@ class _bookState extends State<book> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Book Your Event",
-            style: TextStyle(color: Colors.white)),
+        title: const Text(
+          "Book Your Event",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.yellow[800],
       ),
       body: SingleChildScrollView(
@@ -283,8 +318,10 @@ class _bookState extends State<book> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber[800],
-                padding:
-                const EdgeInsets.symmetric(vertical: 16, horizontal: 40),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 40,
+                ),
               ),
               onPressed: _handleNext,
               child: Text(

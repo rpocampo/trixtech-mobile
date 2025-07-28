@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class OrderScreen extends StatelessWidget {
-  const OrderScreen({super.key});
+  final Map<String, dynamic>? bookingData;
+
+  const OrderScreen({Key? key, this.bookingData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,7 @@ class OrderScreen extends StatelessWidget {
         'price': 500,
         'status': 'Ongoing',
         'rating': 0,
-        'image': 'https://via.placeholder.com/48'
+        'image': 'https://via.placeholder.com/48',
       },
       {
         'orderNo': 'R-1002',
@@ -20,7 +22,7 @@ class OrderScreen extends StatelessWidget {
         'price': 1500,
         'status': 'Returned',
         'rating': 4,
-        'image': 'https://via.placeholder.com/48'
+        'image': 'https://via.placeholder.com/48',
       },
       {
         'orderNo': 'R-1003',
@@ -28,7 +30,7 @@ class OrderScreen extends StatelessWidget {
         'price': 800,
         'status': 'Cancelled',
         'rating': 0,
-        'image': 'https://via.placeholder.com/48'
+        'image': 'https://via.placeholder.com/48',
       },
     ];
 
@@ -55,6 +57,35 @@ class OrderScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          if (bookingData != null)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Material(
+                color: Colors.yellow[100],
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'New Booking:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Event: ${bookingData!['eventType']} - ${bookingData!['eventName']}',
+                      ),
+                      Text('Chairs: ${bookingData!['chairs']}'),
+                      Text('Tables: ${bookingData!['tables']}'),
+                      Text('Tents: ${bookingData!['tents']}'),
+                      Text(
+                        'Gcash: ${bookingData!['gcashName']} (${bookingData!['gcashNumber']})',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           // Search Bar
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -108,6 +139,17 @@ class OrderScreen extends StatelessWidget {
                             width: 48,
                             height: 48,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 48,
+                                height: 48,
+                                color: Colors.grey[300],
+                                child: const Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey,
+                                ),
+                              );
+                            },
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -116,13 +158,19 @@ class OrderScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Rental $orderNo',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                              Text(
+                                'Rental $orderNo',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                               const SizedBox(height: 4),
-                              Text(name),
-                              Text('₱$price / day'),
+                              Text(name, overflow: TextOverflow.ellipsis),
+                              Text(
+                                '₱$price / day',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                               const SizedBox(height: 8),
                               Row(
                                 children: List.generate(5, (i) {
@@ -144,10 +192,11 @@ class OrderScreen extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color:
-                                getStatusColor(status).withOpacity(0.2),
+                                color: getStatusColor(status).withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -172,16 +221,16 @@ class OrderScreen extends StatelessWidget {
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
-                            )
+                            ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
                 );
               },
             ),
-          )
+          ),
         ],
       ),
     );
