@@ -3,7 +3,6 @@ import 'package:my_app/pages/book.dart';
 import 'order_screen.dart';
 import 'models/booking_info.dart';
 
-// MODEL CLASS
 class Listing {
   final String imagePath;
   final bool isNetworkImage;
@@ -61,35 +60,10 @@ class _DashboardPageState extends State<DashboardPage> {
     ),
   ];
 
-  void _navigateToOrderScreen() {
-    final dummyBooking = BookingInfo(
-      eventType: 'Birthday',
-      eventName: 'Anna’s 18th',
-      chairs: 50,
-      tables: 20,
-      tents: 5,
-      gcashName: 'Anna Marie',
-      gcashNumber: '09123456789',
-    );
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => OrderScreen(booking: dummyBooking),
-      ),
-    );
-  }
-
   void _onItemTapped(int index) {
-    if (_selectedIndex == index) return;
-
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
 
     switch (index) {
-      case 0:
-        break; // Stay on Dashboard
       case 1:
         Navigator.push(context, MaterialPageRoute(builder: (_) => const book()));
         break;
@@ -102,6 +76,36 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  void _navigateToOrderScreen() {
+    final pastBookings = [
+      BookingInfo(
+        eventType: 'Birthday',
+        eventName: 'Lucas 1st',
+        chairs: 30,
+        tables: 10,
+        tents: 2,
+        gcashName: 'Maria Gomez',
+        gcashNumber: '09123456780',
+      ),
+      BookingInfo(
+        eventType: 'Wedding',
+        eventName: 'J&K Ceremony',
+        chairs: 100,
+        tables: 50,
+        tents: 10,
+        gcashName: 'Kristine Dela Cruz',
+        gcashNumber: '09998887777',
+      ),
+    ];
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => OrderScreen(bookings: pastBookings),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,25 +113,20 @@ class _DashboardPageState extends State<DashboardPage> {
         title: const Text('TrixTech'),
         backgroundColor: Colors.yellow[800],
       ),
-      drawer: buildDrawer(),
+      drawer: _buildDrawer(),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: listings.length,
-        itemBuilder: (context, index) {
-          final listing = listings[index];
-          return Column(
-            children: [
-              buildListingCard(listing),
-              const SizedBox(height: 20),
-            ],
-          );
-        },
+        itemBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: _buildListingCard(listings[index]),
+        ),
       ),
-      bottomNavigationBar: buildBottomNavigationBar(),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
-  Widget buildDrawer() {
+  Widget _buildDrawer() {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -142,14 +141,14 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
           ),
-          buildDrawerItem(Icons.person, 'Profile', () {
+          _buildDrawerItem(Icons.person, 'Profile', () {
             Navigator.pushNamed(context, '/Test');
           }),
-          buildDrawerItem(Icons.book, 'Book Events', () {
-
+          _buildDrawerItem(Icons.book, 'Book Events', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const book()));
           }),
-          buildDrawerItem(Icons.shopping_bag, 'Orders', _navigateToOrderScreen),
-          buildDrawerItem(Icons.logout, 'Logout', () {
+          _buildDrawerItem(Icons.shopping_bag, 'Orders', _navigateToOrderScreen),
+          _buildDrawerItem(Icons.logout, 'Logout', () {
             Navigator.popUntil(context, ModalRoute.withName('/'));
           }),
         ],
@@ -157,7 +156,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: Colors.yellow[800]),
       title: Text(title),
@@ -165,7 +164,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget buildBottomNavigationBar() {
+  Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       selectedItemColor: Colors.amber[800],
@@ -184,67 +183,71 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget buildListingCard(Listing listing) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              listing.isNetworkImage
-                  ? Image.network(
-                listing.imagePath,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              )
-                  : Image.asset(
-                listing.imagePath,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-              Positioned(
-                top: 12,
-                left: 12,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    'Guest favorite',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              const Positioned(
-                top: 12,
-                right: 12,
-                child: Icon(Icons.favorite_border, color: Colors.white),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildListingCard(Listing listing) {
+    return InkWell(
+      onTap: _navigateToOrderScreen,
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
               children: [
-                Text(
-                  listing.title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                listing.isNetworkImage
+                    ? Image.network(
+                  listing.imagePath,
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                )
+                    : Image.asset(
+                  listing.imagePath,
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(height: 4),
-                Text(listing.subtitle, style: const TextStyle(color: Colors.grey)),
-                const SizedBox(height: 8),
-                Text(listing.price, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      'Guest favorite',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                const Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Icon(Icons.favorite_border, color: Colors.white),
+                ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    listing.title,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(listing.subtitle, style: const TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 8),
+                  Text(listing.price, style: const TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
